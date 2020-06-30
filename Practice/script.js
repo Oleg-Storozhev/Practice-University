@@ -830,7 +830,7 @@ var xy = [
             console.log(xy);
             ctx2.beginPath();
             ctx2.moveTo(xy[0]*100, xy[1]*100);
-          for(let i=0; i<xy.length; i +=2 ){
-            ctx2.quadraticCurveTo(xy[i]*100, xy[i+1]*-100+105, xy[i]*100, xy[i+1]*-100+105);
+          for(let i=0; i < xy.length - 2; i +=2 ){
+            ctx2.bezierCurveTo(xy[i]*100, xy[i+1]*-100+105, xy[i+2]*100, xy[i+3]*-100+105, xy[i+2]*100, xy[i+3]*-100+105);
           }
           ctx2.stroke();
