@@ -824,5 +824,13 @@ var xy = [
           for(let i=0; i<xy.length; i +=2 ){
             ctx.lineTo(xy[i]*100, xy[i+1]*-100+105);
           }
-
           ctx.stroke();
+            const mycanvas2 = document.getElementById('mycanvas2');
+            const ctx2 = mycanvas2.getContext('2d'); 
+            console.log(xy);
+            ctx2.beginPath();
+            ctx2.moveTo(xy[0]*100, xy[1]*100);
+          for(let i=0; i<xy.length; i +=2 ){
+            ctx2.quadraticCurveTo(xy[i]*100, xy[i+1]*-100+105, xy[i]*100, xy[i+1]*-100+105);
+          }
+          ctx2.stroke();
