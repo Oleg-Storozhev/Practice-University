@@ -2,6 +2,13 @@
 <html>
   <head>
     <title>Oleg Storozhev</title>
+    <script src="/script.js" defer></script>
+     <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
   <link rel="stylesheet" type="text/css" href="style.css" />
   <body>
@@ -24,6 +31,7 @@
       height="400"
       style="border: solid green;"
     ></canvas>
+      <p>Пусть даны точки A, B, C. Где A - начальная точка. B - контрольная точка. С - Кончная точка. Тогда для того чтобы получилась линия на вырисовке кубических сплайнов Безье надо чтобы контрольная точка касалась дуги. Достаточно разместить точку в начально точка A или конечной точке C. Т.е $$A = B \wedge B = C$$ Также возможен вариант когда A, B и С это одна точка. Т.е $$A = B = C$$ </p>
     </details>
     <script 
       src = "script.js"></script>
