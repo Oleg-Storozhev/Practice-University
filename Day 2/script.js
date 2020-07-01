@@ -1,5 +1,5 @@
 function f(x){
-  return x*x;
+  return x*x-9;
 }
 
 
@@ -101,6 +101,20 @@ class Graphics1d {
     }
     ctx.stroke();
     
+    // Нули функции
+    i = 0;
+    ctx.beginPath();
+    for(let x = this.xmin; x <= this.xmax; x+=dx){
+      X = (x-this.xmin)*Sx;
+      Y = -(this.y[i]-this.ymin)*Sy+this.H;
+      if((x >= -0.05 &&  x <= 0.05 ) || this.y[i] >= -0.05 && this.y[i] <= 0.05){
+        ctx.beginPath();
+        ctx.arc(X, Y, 5, 0, 2*Math.PI);
+        ctx.fill();
+      }
+      i++;
+    }
+    
   }
 }
 
@@ -108,3 +122,12 @@ class Graphics1d {
 let g = new Graphics1d();
 g.evaluate();
 g.draw();
+
+// (0-this.xmin)*Sx
+// -(0-this.ymin)*Sy+this.H 
+
+/* !!!! ИДЕЯ РАЗВИТЬ !!!!!!
+if(Math.round(x) >=  0 || Math.round(this.y[i]) >= 0){
+        ctx.arc(X, Y, 5, 0, 2*Math.PI);
+      }
+*/
