@@ -1,7 +1,6 @@
-function f(x){
-  return -x;
+function f(x) {
+  return x * x;
 }
-
 
 class Graphics1d {
   constructor() {
@@ -13,134 +12,150 @@ class Graphics1d {
     this.H = 500;
     this.y = new Float64Array(this.W);
   }
-  
-  evaluate(){
+
+  evaluate() {
     let i = 0;
     let X;
     let L = this.W;
-    let l = this.xmax-this.xmin;
-    let dx = l/this.W;
-    let S = L/l;
-    
-    for(let x = this.xmin; x <= this.xmax; x+= dx){
+    let l = this.xmax - this.xmin;
+    let dx = l / this.W;
+    let S = L / l;
+
+    for (let x = this.xmin; x <= this.xmax; x += dx) {
       this.y[i] = f(x);
       i++;
     }
   }
-  
-  
-  draw(){
+
+  draw() {
     let i = 0;
     let Lx = this.W;
-    let lx = this.xmax-this.xmin;
+    let lx = this.xmax - this.xmin;
     let Ly = this.H;
-    let ly = this.ymax-this.ymin;
-    let dx = lx/this.W;
-    let Sx = Lx/lx;
-    let Sy = Ly/ly;
-    let X = (0-this.xmin)*Sx+0;
-    let Y = -(0-this.ymin)*Sy+this.H;
-    
-    
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d'); 
+    let ly = this.ymax - this.ymin;
+    let dx = lx / this.W;
+    let Sx = Lx / lx;
+    let Sy = Ly / ly;
+    let X = (0 - this.xmin) * Sx + 0;
+    let Y = -(0 - this.ymin) * Sy + this.H;
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
     canvas.height = this.H;
     canvas.width = this.W;
-    
+
     // Сетка координат
-    for (var x = 0; x < Math.max(this.W, this.H); x += this.W/lx) {
+    for (var x = 0; x < Math.max(this.W, this.H); x += this.W / lx) {
       ctx.moveTo(x, 0);
       ctx.lineTo(x, Math.max(this.W, this.H));
     }
 
-    for (var y = 0; y < Math.max(this.W, this.H); y += this.W/ly) {
+    for (var y = 0; y < Math.max(this.W, this.H); y += this.W / ly) {
       ctx.moveTo(0, y);
       ctx.lineTo(Math.max(this.W, this.H), y);
     }
 
     ctx.strokeStyle = "#888";
     ctx.stroke();
-    
+
     // координата Х
     ctx.beginPath();
     ctx.strokeStyle = "blue";
-    Y = -(0-this.ymin)*Sy+this.H;
+    Y = -(0 - this.ymin) * Sy + this.H;
     ctx.moveTo(X, Y);
-    
-    for(let x = this.xmin; x <= this.xmax; x+=dx){
-      X = (x-this.xmin)*Sx;
-      Y = -(0-this.ymin)*Sy+this.H;
+
+    for (let x = this.xmin; x <= this.xmax; x += dx) {
+      X = (x - this.xmin) * Sx;
+      Y = -(0 - this.ymin) * Sy + this.H;
       ctx.lineTo(X, Y);
     }
     ctx.stroke();
-    
+
     // координата Y
     ctx.strokeStyle = "blue";
-    X = (0-this.xmin)*Sx;
+    X = (0 - this.xmin) * Sx;
     Y = this.H;
     ctx.moveTo(X, Y);
-    
-    for(let y = this.ymin; y <= this.ymax; y+=dx){
-      X = (0-this.xmin)*Sx;
-      Y = -(y-this.ymin)*Sy+this.H;
+
+    for (let y = this.ymin; y <= this.ymax; y += dx) {
+      X = (0 - this.xmin) * Sx;
+      Y = -(y - this.ymin) * Sy + this.H;
       ctx.lineTo(X, Y);
     }
     ctx.stroke();
-    
-    
+
     // Функция
-    X = (0-this.xmin)*Sx+0;
+    X = (0 - this.xmin) * Sx + 0;
     ctx.beginPath();
     ctx.strokeStyle = "red";
-    Y = -(this.y[0]-this.ymin)*Sy+this.H;
-    for(let x = this.xmin; x <= this.xmax; x+=dx){
-      X = (x-this.xmin)*Sx;
-      Y = -(this.y[i]-this.ymin)*Sy+this.H;
+    Y = -(this.y[0] - this.ymin) * Sy + this.H;
+    for (let x = this.xmin; x <= this.xmax; x += dx) {
+      X = (x - this.xmin) * Sx;
+      Y = -(this.y[i] - this.ymin) * Sy + this.H;
       ctx.lineTo(X, Y);
       i++;
     }
     ctx.stroke();
-    
+
     // Нули функции
     i = 0;
-    for(let x = this.xmin; x <= this.xmax; x+=dx){
-      X = (x-this.xmin)*Sx;
-      Y = -(this.y[i]-this.ymin)*Sy+this.H;
-      if((x >= -0.05 &&  x <= 0.05 ) || this.y[i] >= -0.05 && this.y[i] <= 0.05){
+    for (let x = this.xmin; x <= this.xmax; x += dx) {
+      X = (x - this.xmin) * Sx;
+      Y = -(this.y[i] - this.ymin) * Sy + this.H;
+      if (
+        (x >= -0.05 && x <= 0.05) ||
+        (this.y[i] >= -0.05 && this.y[i] <= 0.05)
+      ) {
         ctx.beginPath();
-        ctx.arc(X, Y, 3, 0, 2*Math.PI);
+        ctx.arc(X, Y, 3, 0, 2 * Math.PI);
         ctx.fill();
       }
       i++;
     }
-    
+
     // Рисовка больше или меньше
     i = 0;
     ctx.beginPath();
     ctx.moveTo(this.W, 0);
     ctx.lineTo(0, 0);
-    for(let x = this.xmin; x <= this.xmax; x+=dx){
-      X = (x-this.xmin)*Sx;
-      Y = -(this.y[i]-this.ymin)*Sy+this.H;
+    for (let x = this.xmin; x <= this.xmax; x += dx) {
+      X = (x - this.xmin) * Sx;
+      Y = -(this.y[i] - this.ymin) * Sy + this.H;
       ctx.lineTo(X, Y);
-      if(this.y[i] > 0){
+      if (this.y[i] > 0) {
         ctx.lineTo(X, Y);
       }
       i++;
     }
     ctx.fillStyle = "rgba(100,150,185,0.5)";
     ctx.fill();
-    
   }
+  
+  autodraw(){
+    let min = 999999;
+    let max = -999999;
+    for (let i = 0; i <= this.y.length; i++) {
+       if(min > this.y[i]){
+         min = this.y[i];
+       }
+       if(max < this.y[i]){
+        max = this.y[i];
+       }
+      i++;
+    }
+    this.ymin = min;
+    this.ymax = max;
+  }
+  
 }
-
 
 let g = new Graphics1d();
 g.evaluate();
+// g.autodraw();
 g.draw();
 
 // (0-this.xmin)*Sx
-// -(0-this.ymin)*Sy+this.H 
+// -(0-this.ymin)*Sy+this.H
 
 /* !!!! ИДЕЯ РАЗВИТЬ !!!!!!
 if(Math.round(x) >=  0 || Math.round(this.y[i]) >= 0){
