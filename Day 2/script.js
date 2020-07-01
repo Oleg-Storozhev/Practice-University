@@ -1,5 +1,5 @@
 function f(x){
-  return x*x-9;
+  return -x;
 }
 
 
@@ -103,17 +103,33 @@ class Graphics1d {
     
     // Нули функции
     i = 0;
-    ctx.beginPath();
     for(let x = this.xmin; x <= this.xmax; x+=dx){
       X = (x-this.xmin)*Sx;
       Y = -(this.y[i]-this.ymin)*Sy+this.H;
       if((x >= -0.05 &&  x <= 0.05 ) || this.y[i] >= -0.05 && this.y[i] <= 0.05){
         ctx.beginPath();
-        ctx.arc(X, Y, 5, 0, 2*Math.PI);
+        ctx.arc(X, Y, 3, 0, 2*Math.PI);
         ctx.fill();
       }
       i++;
     }
+    
+    // Рисовка больше или меньше
+    i = 0;
+    ctx.beginPath();
+    ctx.moveTo(this.W, 0);
+    ctx.lineTo(0, 0);
+    for(let x = this.xmin; x <= this.xmax; x+=dx){
+      X = (x-this.xmin)*Sx;
+      Y = -(this.y[i]-this.ymin)*Sy+this.H;
+      ctx.lineTo(X, Y);
+      if(this.y[i] > 0){
+        ctx.lineTo(X, Y);
+      }
+      i++;
+    }
+    ctx.fillStyle = "rgba(100,150,185,0.5)";
+    ctx.fill();
     
   }
 }
