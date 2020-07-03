@@ -21,20 +21,28 @@ class Graphics1d {
     this.H = 500;
     this.y = new Float64Array(this.W);
     this.a = 0.5;
-    this.dx = 0.000001;
+    this.dx = 0.000000001;
   }
   
   Ridder(x_0, x_2){
     let l = this.xmax - this.xmin;
     let dx = l / this.W;
     let i = 1;
+    let ii = 0;
+    let vec_x = new Float64Array(this.W);
+    let vec_x1 = new Float64Array(this.W);
+    let vec_inter = new Float64Array(this.W);
+    let vec_y = new Float64Array(this.W);
     
     let x_3;
     let x_1;
     let check = false;
+    let check_a = false;
     const canvas = document.getElementById("canvas");
     const ctx2 = canvas.getContext("2d");
+    // let x = this.xmin;
     
+  
     for (let x = this.xmin; x <= this.xmax; x += dx) {
       if(this.y[i]*this.y[i-1] < 0){
         check = true;
@@ -43,16 +51,13 @@ class Graphics1d {
         x_2 = x;
         x_1 = (x_0+x_2)/2;
         let inter = 1;
-        
         for(let x = x_2; x <= this.xmax; x += 0){
-          // x3 = ?
           let dx1 = x_1-x_0;
           let f1_a = f(x_1, this.a);
           let f0_a = f(x_0, this.a);
           let f2_a = f(x_2, this.a);
           let num = dx1*sign(x_0)*f1_a;
           let det = f1_a*f1_a-f0_a*f2_a;
-          console.log('det =' +det);
           let den = Math.sqrt(det);
           x_3 = x_1+num/den;
           
@@ -66,10 +71,19 @@ class Graphics1d {
             let Y = -(0 - this.ymin) * Sy + this.H;
             let Sx = this.W / (this.xmax - this.xmin);
             let X = (x_3 - this.xmin) * Sx;
+            vec_x1[ii] = x;
+            vec_x[ii] = X;
+            vec_y[ii] = Y;
+            vec_inter[ii] = inter;
+            ii++;
+            /*
             document.write('<br />x = ' + x + ' Inter =' + inter);
             ctx2.beginPath();
             ctx2.arc(X, Y, 3, 0, 2 * Math.PI);
+            ctx2.fillStyle = "green";
             ctx2.fill();
+            */
+            ii++;
             break;
           }
           x_0 = x_1;
@@ -80,10 +94,27 @@ class Graphics1d {
       }
     }
       i++;
+      if(x > x.max){
+        check_a = true;
+      }
     }
     
     if(check === false){
       document.write('Imposible, every f(x0)f(x2) > 0');
+    }
+    ii = 0;
+    function dinamic(){
+      ctx2.beginPath();
+      ctx2.arc(vec_x[ii], vec_y[ii], 3, 0, 2 * Math.PI);
+      ctx2.fillStyle = "green";
+      ctx2.fill();
+      ii++;
+      if(ii == vec_y.length-1){
+        check_a = true;
+      }
+    }
+    if(check_a == false){
+       let n = setInterval(dinamic, 2000);
     }
   }
   
@@ -237,8 +268,6 @@ class Graphics1d {
   }
   
 }
-
-
 let g = new Graphics1d();
 
 g.evaluate();
