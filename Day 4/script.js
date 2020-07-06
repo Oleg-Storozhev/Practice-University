@@ -13,15 +13,16 @@ function sign(x){
 
 class Graphics1d {
   constructor() {
-    this.xmin = -4.0;
+    this.xmin = -5.0;
     this.xmax = 5.0;
     this.ymin = -10.0;
     this.ymax = 10.0;
-    this.W = 500;
-    this.H = 500;
+    this.W = 450;
+    this.H = 450;
     this.y = new Float64Array(this.W);
-    this.a = 0.5;
+    this.a = 1;
     this.dx = 0.000000001;
+    this.time = 500;
   }
   
   Ridder(x_0, x_2){
@@ -33,15 +34,14 @@ class Graphics1d {
     let vec_x1 = new Float64Array(this.W);
     let vec_inter = new Float64Array(this.W);
     let vec_y = new Float64Array(this.W);
-    
     let x_3;
     let x_1;
     let check = false;
-    let check_a = false;
+    let count = 0;
+    
     const canvas = document.getElementById("canvas");
     const ctx2 = canvas.getContext("2d");
-    // let x = this.xmin;
-    
+    document.write('<br />');
   
     for (let x = this.xmin; x <= this.xmax; x += dx) {
       if(this.y[i]*this.y[i-1] < 0){
@@ -64,8 +64,10 @@ class Graphics1d {
           if(x_3*x_1 < 0){
              break;
           }
-          let d1 = Math.abs(x_1-x_0);
+          
+          let d1 = Math.abs(x_3-x_2);
           let d2 = Math.abs(x_2-x_1);
+          
           if (Math.max(d1,d2) < this.dx){
             let Sy = this.H / (this.ymax - this.ymin);
             let Y = -(0 - this.ymin) * Sy + this.H;
@@ -76,14 +78,7 @@ class Graphics1d {
             vec_y[ii] = Y;
             vec_inter[ii] = inter;
             ii++;
-            /*
-            document.write('<br />x = ' + x + ' Inter =' + inter);
-            ctx2.beginPath();
-            ctx2.arc(X, Y, 3, 0, 2 * Math.PI);
-            ctx2.fillStyle = "green";
-            ctx2.fill();
-            */
-            ii++;
+            count++;
             break;
           }
           x_0 = x_1;
@@ -94,27 +89,25 @@ class Graphics1d {
       }
     }
       i++;
-      if(x > x.max){
-        check_a = true;
-      }
     }
     
     if(check === false){
       document.write('Imposible, every f(x0)f(x2) > 0');
     }
+    
     ii = 0;
+    var n = setInterval(dinamic, this.time);
     function dinamic(){
       ctx2.beginPath();
       ctx2.arc(vec_x[ii], vec_y[ii], 3, 0, 2 * Math.PI);
       ctx2.fillStyle = "green";
       ctx2.fill();
+      text.value += ii+1+") x = "+vec_x1[ii]+"\t Inter = "+vec_inter[ii]+"\n\n";
       ii++;
-      if(ii == vec_y.length-1){
-        check_a = true;
+      if(ii >= count){
+        mytag.innerHTML += "Count = "+count;
+        clearInterval(n);
       }
-    }
-    if(check_a == false){
-       let n = setInterval(dinamic, 2000);
     }
   }
   
@@ -206,24 +199,6 @@ class Graphics1d {
       i++;
     }
     ctx.stroke();
-    
-    
-    // Нули функции
-   /*i = 0;
-    for (let x = this.xmin; x <= this.xmax; x += dx) {
-      X = (x - this.xmin) * Sx;
-      Y = -(this.y[i] - this.ymin) * Sy + this.H;
-      if (
-        (x >= -0.15 && x <= 0.15) ||
-        (this.y[i] >= -0.15 && this.y[i] <= 0.15)
-      ) {
-        ctx.beginPath();
-        ctx.arc(X, Y, 3, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-      i++;
-    }
-*/
     // Рисовка больше или меньше
     i = 0;
     ctx.beginPath();
@@ -274,12 +249,3 @@ g.evaluate();
 g.autodraw();
 g.draw();
 g.Ridder(this.xmin, this.xmax);
-
-// (0-this.xmin)*Sx
-// -(0-this.ymin)*Sy+this.H
-
-/* !!!! ИДЕЯ РАЗВИТЬ !!!!!!
-if(Math.round(x) >=  0 || Math.round(this.y[i]) >= 0){
-        ctx.arc(X, Y, 5, 0, 2*Math.PI);
-      }
-*/
