@@ -1,15 +1,14 @@
 function f(x) {
-  return x * x;
+  return x*Math.sin(x);
 }
-
 class Graphics1d {
   constructor() {
-    this.xmin = -10.0;
-    this.xmax = 10.0;
+    this.xmin = -5.0;
+    this.xmax = 5;
     this.ymin = -10.0;
     this.ymax = 10.0;
-    this.W = 500;
-    this.H = 500;
+    this.W = 600;
+    this.H = 600;
     this.y = new Float64Array(this.W);
   }
 
@@ -38,6 +37,7 @@ class Graphics1d {
     let Sy = Ly / ly;
     let X = (0 - this.xmin) * Sx + 0;
     let Y = -(0 - this.ymin) * Sy + this.H;
+    let Y_2;
 
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
@@ -92,7 +92,11 @@ class Graphics1d {
     for (let x = this.xmin; x <= this.xmax; x += dx) {
       X = (x - this.xmin) * Sx;
       Y = -(this.y[i] - this.ymin) * Sy + this.H;
+      if (Math.abs(Y_2) - Math.abs(Y) > 10) {
+        ctx.lineTo(X, Y);
+      }
       ctx.lineTo(X, Y);
+      Y_2 = Y;
       i++;
     }
     ctx.stroke();
@@ -103,8 +107,8 @@ class Graphics1d {
       X = (x - this.xmin) * Sx;
       Y = -(this.y[i] - this.ymin) * Sy + this.H;
       if (
-        (x >= -0.05 && x <= 0.05) ||
-        (this.y[i] >= -0.05 && this.y[i] <= 0.05)
+        (x >= -0.15 && x <= 0.15) ||
+        (this.y[i] >= -0.15 && this.y[i] <= 0.15)
       ) {
         ctx.beginPath();
         ctx.arc(X, Y, 3, 0, 2 * Math.PI);
@@ -129,29 +133,38 @@ class Graphics1d {
     }
     ctx.fillStyle = "rgba(100,150,185,0.5)";
     ctx.fill();
+    ctx.fillStyle = "red";
+    ctx.fillText("xmin=", 10, this.H - 40);
+    ctx.fillText("ymin=", 10, this.H - 20);
+    ctx.fillText("xmax=", this.W - 100, 20);
+    ctx.fillText("ymax=", this.W - 100, 40);
+    ctx.fillText(this.xmin, 70, this.H - 40);
+    ctx.fillText(this.ymin, 70, this.H - 20);
+    ctx.fillText(this.xmax, this.W - 30, 20);
+    ctx.fillText(this.ymax, this.W - 30, 40);
   }
-  
-  autodraw(){
+
+  autodraw() {
     let min = 999999;
     let max = -999999;
     for (let i = 0; i <= this.y.length; i++) {
-       if(min > this.y[i]){
-         min = this.y[i];
-       }
-       if(max < this.y[i]){
+      if (min > this.y[i]) {
+        min = this.y[i];
+      }
+      if (max < this.y[i]) {
         max = this.y[i];
-       }
+      }
       i++;
     }
     this.ymin = min;
     this.ymax = max;
   }
-  
 }
 
 let g = new Graphics1d();
+
 g.evaluate();
-// g.autodraw();
+g.autodraw();
 g.draw();
 
 // (0-this.xmin)*Sx
