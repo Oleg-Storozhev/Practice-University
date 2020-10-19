@@ -1,5 +1,5 @@
 function f(x, a) {
-  return x*x+5;
+  return x*x-8;
 }
 function sign(x){
   if(f(x, 1) > 0){
