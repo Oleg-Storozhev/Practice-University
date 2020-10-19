@@ -1,17 +1,115 @@
-function f(x) {
-  return x*Math.sin(x);
+function f(x, a) {
+  return x*x+5;
 }
+function sign(x){
+  if(f(x, 1) > 0){
+    return 1;
+  }
+  if(f(x, 1) < 0){
+    return -1;
+  }
+  return 0;
+}
+
 class Graphics1d {
   constructor() {
     this.xmin = -5.0;
-    this.xmax = 5;
+    this.xmax = 5.0;
     this.ymin = -10.0;
     this.ymax = 10.0;
-    this.W = 600;
-    this.H = 600;
+    this.W = 450;
+    this.H = 450;
     this.y = new Float64Array(this.W);
+    this.a = 1;
+    this.dx = 0.000000001;
+    this.time = 500;
   }
-
+  
+  Ridder(x_0, x_2){
+    let l = this.xmax - this.xmin;
+    let dx = l / this.W;
+    let i = 1;
+    let ii = 0;
+    let vec_x = new Float64Array(this.W);
+    let vec_x1 = new Float64Array(this.W);
+    let vec_inter = new Float64Array(this.W);
+    let vec_y = new Float64Array(this.W);
+    let x_3;
+    let x_1;
+    let check = false;
+    let count = 0;
+    
+    const canvas = document.getElementById("canvas");
+    const ctx2 = canvas.getContext("2d");
+  
+    for (let x = this.xmin; x <= this.xmax; x += dx) {
+      if(this.y[i]*this.y[i-1] < 0){
+        check = true;
+        
+        x_0 = x-dx;
+        x_2 = x;
+        x_1 = (x_0+x_2)/2;
+        let inter = 1;
+        for(let x = x_2; x <= this.xmax; x += 0){
+          let dx1 = x_1-x_0;
+          let f1_a = f(x_1, this.a);
+          let f0_a = f(x_0, this.a);
+          let f2_a = f(x_2, this.a);
+          let num = dx1*sign(x_0)*f1_a;
+          let det = f1_a*f1_a-f0_a*f2_a;
+          let den = Math.sqrt(det);
+          x_3 = x_1+num/den;
+          
+          if(x_3*x_1 < 0){
+             break;
+          }
+          
+          let d1 = Math.abs(x_3-x_2);
+          let d2 = Math.abs(x_2-x_1);
+          
+          if (Math.max(d1,d2) < this.dx){
+            let Sy = this.H / (this.ymax - this.ymin);
+            let Y = -(0 - this.ymin) * Sy + this.H;
+            let Sx = this.W / (this.xmax - this.xmin);
+            let X = (x_3 - this.xmin) * Sx;
+            vec_x1[ii] = x;
+            vec_x[ii] = X;
+            vec_y[ii] = Y;
+            vec_inter[ii] = inter;
+            ii++;
+            count++;
+            break;
+          }
+          x_0 = x_1;
+          x_2 = x_3;
+          x_1 = (x_2+x_0)/2;
+          x = x_3;
+          inter++;
+      }
+    }
+      i++;
+    }
+    
+    if(check === false){
+      document.write('Imposible, every f(x0)f(x2) > 0');
+    }
+    
+    ii = 0;
+    var n = setInterval(dinamic, this.time);
+    function dinamic(){
+      ctx2.beginPath();
+      ctx2.arc(vec_x[ii], vec_y[ii], 3, 0, 2 * Math.PI);
+      ctx2.fillStyle = "green";
+      ctx2.fill();
+      text.value += ii+1+") x = "+vec_x1[ii]+"\t Inter = "+vec_inter[ii]+"\n\n";
+      ii++;
+      if(ii >= count){
+        mytag.innerHTML += "Count = "+count;
+        clearInterval(n);
+      }
+    }
+  }
+  
   evaluate() {
     let i = 0;
     let X;
@@ -21,7 +119,7 @@ class Graphics1d {
     let S = L / l;
 
     for (let x = this.xmin; x <= this.xmax; x += dx) {
-      this.y[i] = f(x);
+      this.y[i] = f(x, this.a);
       i++;
     }
   }
@@ -100,23 +198,6 @@ class Graphics1d {
       i++;
     }
     ctx.stroke();
-
-    // Нули функции
-    i = 0;
-    for (let x = this.xmin; x <= this.xmax; x += dx) {
-      X = (x - this.xmin) * Sx;
-      Y = -(this.y[i] - this.ymin) * Sy + this.H;
-      if (
-        (x >= -0.15 && x <= 0.15) ||
-        (this.y[i] >= -0.15 && this.y[i] <= 0.15)
-      ) {
-        ctx.beginPath();
-        ctx.arc(X, Y, 3, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-      i++;
-    }
-
     // Рисовка больше или меньше
     i = 0;
     ctx.beginPath();
@@ -145,8 +226,8 @@ class Graphics1d {
   }
 
   autodraw() {
-    let min = 999999;
-    let max = -999999;
+    let min = this.ymax;
+    let max = this.ymin;
     for (let i = 0; i <= this.y.length; i++) {
       if (min > this.y[i]) {
         min = this.y[i];
@@ -159,19 +240,11 @@ class Graphics1d {
     this.ymin = min;
     this.ymax = max;
   }
+  
 }
-
 let g = new Graphics1d();
 
 g.evaluate();
 g.autodraw();
 g.draw();
-
-// (0-this.xmin)*Sx
-// -(0-this.ymin)*Sy+this.H
-
-/* !!!! ИДЕЯ РАЗВИТЬ !!!!!!
-if(Math.round(x) >=  0 || Math.round(this.y[i]) >= 0){
-        ctx.arc(X, Y, 5, 0, 2*Math.PI);
-      }
-*/
+g.Ridder(this.xmin, this.xmax);
